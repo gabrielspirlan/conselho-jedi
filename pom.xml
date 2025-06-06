@@ -11,8 +11,8 @@
     <groupId>com.padwan</groupId>
     <artifactId>test</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>Padwan test</name>
-    <description>Padwan test for Juniors</description>
+    <name>Jedi API</name>
+    <description>Jedi API - Gabriel Resende Spirlandelli. Desenvolvida para projeto da disciplina de Integração e Entrega Contínua do quarto período de Desenvolvimetno de Software Multiplataforma da Fatec de Franca/SP</description>
 
     <properties>
         <java.version>11</java.version>
