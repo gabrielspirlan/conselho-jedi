@@ -53,8 +53,8 @@ jobs:
             docker stop sonar_starwars || true
             docker rm sonar_starwars || true
             
+            # ATENÇÃO: Verifique se esta porta (9005) é a mesma do seu pom.xml e do seu firewall.
             echo "Iniciando contêiner temporário do SonarQube na porta 9005..."
-            # --- ALTERAÇÃO AQUI: Usando a porta 9005 ---
             docker run -d --name sonar_starwars -p 9005:9000 sonarqube:lts-community
             
             echo "Aguardando 15 segundos para o contêiner estabilizar..."
@@ -72,7 +72,8 @@ jobs:
       - name: Análise do SonarQube com Maven
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn verify sonar:sonar -DskipTests -Dsonar.qualitygate.wait=true
+        # --- ALTERAÇÃO AQUI: Removido o -DskipTests para executar os testes ---
+        run: mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
 
       - name: Parar e remover o contêiner do SonarQube
         if: always()
