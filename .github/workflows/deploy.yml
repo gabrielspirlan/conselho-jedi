@@ -56,7 +56,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "Iniciando contêiner temporário do SonarQube..."
-            docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
+            docker run -d --name sonarqube_starwars -p 8097:9000 sonarqube:lts-community
             echo "Aguardando SonarQube iniciar (90 segundos)..."
             sleep 180
             docker ps
@@ -75,8 +75,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "Finalizando e removendo contêiner do SonarQube..."
-            docker stop sonarqube || true
-            docker rm sonarqube || true
+            docker rm --force sonarqube_starwars || true
 
   deploy:
     name: Deploy Remoto via Docker Run
