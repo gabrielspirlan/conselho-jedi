@@ -15,7 +15,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   app:
-    build: .
+    image: gabrielspirlan/jedi-api
     container_name: jedi-api
     depends_on:
       - postgres
