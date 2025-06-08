@@ -50,22 +50,22 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Limpa qualquer contêiner antigo para evitar conflitos
-            docker stop sonarqube || true
-            docker rm sonarqube || true
+            # Garante que não haja um contêiner antigo com o nome desejado
+            docker stop sonar_starwars || true
+            docker rm sonar_starwars || true
             
-            echo "Iniciando contêiner temporário do SonarQube na porta 8097..."
-            docker rm --force sonarqube_starwars
-            docker run -d --name sonarqube_starwars -p 8097:9000 sonarqube:lts-community
+            echo "Iniciando contêiner temporário do SonarQube..."
+            # --- ALTERAÇÃO AQUI: Usando o nome "sonar_starwars" ---
+            docker run -d --name sonar_starwars -p 8097:9000 sonarqube:lts-community
             
             echo "Aguardando 15 segundos para o contêiner estabilizar..."
             sleep 15
             
             echo "--- DIAGNÓSTICO: Verificando status do container ---"
-            docker ps -a --filter name=sonarqube
+            docker ps -a --filter name=sonar_starwars
             
             echo "--- DIAGNÓSTICO: Exibindo logs do container SonarQube ---"
-            docker logs sonarqube
+            docker logs sonar_starwars
 
             echo "Aguardando SonarQube iniciar (mais 75 segundos)..."
             sleep 75
@@ -84,8 +84,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "Finalizando e removendo contêiner do SonarQube..."
-            docker stop sonarqube || true
-            docker rm sonarqube || true
+            # --- ALTERAÇÃO AQUI: Parando e removendo o nome correto ---
+            docker stop sonar_starwars || true
+            docker rm sonar_starwars || true
 
   deploy:
     name: Deploy Remoto via Docker Run
