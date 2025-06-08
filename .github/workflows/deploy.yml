@@ -58,7 +58,8 @@ jobs:
             echo "Iniciando contêiner temporário do SonarQube..."
             docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
             echo "Aguardando SonarQube iniciar (90 segundos)..."
-            sleep 90 # TEMPO AUMENTADO
+            sleep 180
+            docker ps
 
       - name: Análise do SonarQube com Maven
         env:
