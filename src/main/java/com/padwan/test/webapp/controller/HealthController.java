@@ -1,13 +1,15 @@
 package com.padwan.test.webapp.controller;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.coyote.Response;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,7 +23,7 @@ public class HealthController {
     @GetMapping("/health")
     @Operation(summary = "Consultar se a API está disponível",
             description = "Retorna uma mensagem se a API estiver disponível",
-    tags = {"Health"})
+            tags = {"Health"})
     public ResponseEntity health() {
         JSONObject json = new JSONObject();
         json.put("kenobi", "Hello there!");
@@ -29,11 +31,11 @@ public class HealthController {
         return new ResponseEntity(json.toString(), HttpStatus.OK);
     }
 
-    @GetMapping("/")
     @Operation(summary = "Redirecionar para a página da documentação",
             description = "Essa rota serve apenas para redirecionar o usuário a página da documentação do Swagger",
             tags = {"Health"}
     )
+    @GetMapping("/")
     public void redirectToSwagger(HttpServletResponse response) throws IOException {
         response.sendRedirect("/swagger-ui/index.html");
     }

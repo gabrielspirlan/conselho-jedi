@@ -12,13 +12,18 @@
     <artifactId>test</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Jedi API</name>
-    <description>Jedi API - Gabriel Resende Spirlandelli. Desenvolvida para projeto da disciplina de Integração e Entrega Contínua do quarto período de Desenvolvimetno de Software Multiplataforma da Fatec de Franca/SP</description>
+    <description>Jedi API - Gabriel Resende Spirlandelli. Desenvolvida para projeto da disciplina de Integração e
+        Entrega Contínua do quarto período de Desenvolvimetno de Software Multiplataforma da Fatec de Franca/SP
+    </description>
 
     <properties>
         <java.version>11</java.version>
         <spring.datasource.url>jdbc:postgresql://localhost:5432/padawan</spring.datasource.url>
         <spring.datasource.username>postgres</spring.datasource.username>
         <spring.datasource.password>password</spring.datasource.password>
+        <sonar.organization>default-organization</sonar.organization>
+        <sonar.host.url>http://201.23.3.86:9000</sonar.host.url>
+        <sonar.projectKey>jedi-api</sonar.projectKey>
     </properties>
 
     <dependencies>
@@ -27,7 +32,10 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -79,7 +87,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-
 
 
     </dependencies>

@@ -19,7 +19,7 @@ public class Jedi {
 
     @NotBlank
     @Column (nullable = false)
-    @Pattern(regexp = "Padawan|Jedi|Mestre Jedi|")
+    @Pattern(regexp = "Padawan|Jedi|Mestre Jedi")
     private String status;
 
     @Column (nullable = false)
