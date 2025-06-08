@@ -82,9 +82,9 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "Finalizando e removendo contêiner do SonarQube..."
-            docker stop sonar_starwars || true
-            docker rm sonar_starwars || true
+            # echo "Finalizando e removendo contêiner do SonarQube..."
+            # docker stop sonar_starwars || true
+            # docker rm sonar_starwars || true
 
   deploy:
     name: Deploy Remoto via Docker Run
