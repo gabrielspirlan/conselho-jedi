@@ -12,19 +12,15 @@ jobs:
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
-
       - name: Configurar QEMU
         uses: docker/setup-qemu-action@v3
-
       - name: Configurar Docker Buildx
         uses: docker/setup-buildx-action@v3
-
       - name: Login no Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
       - name: Build e Push da imagem
         uses: docker/build-push-action@v5
         with:
@@ -41,25 +37,38 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Configurar JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Iniciar SonarQube temporariamente no servidor
+      - name: Iniciar e Diagnosticar SonarQube no servidor
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            echo "Iniciando contêiner temporário do SonarQube..."
+            # Limpa qualquer contêiner antigo para evitar conflitos
+            docker stop sonarqube || true
+            docker rm sonarqube || true
+            
+            echo "Iniciando contêiner temporário do SonarQube na porta 8097..."
+            docker rm --force sonarqube_starwars
             docker run -d --name sonarqube_starwars -p 8097:9000 sonarqube:lts-community
-            echo "Aguardando SonarQube iniciar (90 segundos)..."
-            sleep 180
-            docker ps
+            
+            echo "Aguardando 15 segundos para o contêiner estabilizar..."
+            sleep 15
+            
+            echo "--- DIAGNÓSTICO: Verificando status do container ---"
+            docker ps -a --filter name=sonarqube
+            
+            echo "--- DIAGNÓSTICO: Exibindo logs do container SonarQube ---"
+            docker logs sonarqube
+
+            echo "Aguardando SonarQube iniciar (mais 75 segundos)..."
+            sleep 75
 
       - name: Análise do SonarQube com Maven
         env:
@@ -75,7 +84,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "Finalizando e removendo contêiner do SonarQube..."
-            docker rm --force sonarqube_starwars || true
+            docker stop sonarqube || true
+            docker rm sonarqube || true
 
   deploy:
     name: Deploy Remoto via Docker Run
@@ -105,32 +115,14 @@ jobs:
             docker pull postgres:15
             
             echo "Iniciando contêiner do PostgreSQL..."
-            docker run -d \
-              --name $DB_CONTAINER \
-              --network $NETWORK_NAME \
-              --restart always \
-              -e POSTGRES_DB=StarWars \
-              -e POSTGRES_USER=postgres \
-              -e POSTGRES_PASSWORD=1234 \
-              -p 5544:5432 \
-              -v postgres_data:/var/lib/postgresql/data \
-              postgres:15
-              
+            docker run -d --name $DB_CONTAINER --network $NETWORK_NAME --restart always -e POSTGRES_DB=StarWars -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=1234 -p 5544:5432 -v postgres_data:/var/lib/postgresql/data postgres:15
+            
             echo "Aguardando o banco de dados iniciar..."
             sleep 15
             
             echo "Iniciando contêiner da aplicação..."
-            docker run -d \
-              --name $APP_CONTAINER \
-              --network $NETWORK_NAME \
-              --restart always \
-              -p 8108:8108 \
-              -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_starwars:5432/StarWars \
-              -e SPRING_DATASOURCE_USERNAME=postgres \
-              -e SPRING_DATASOURCE_PASSWORD=1234 \
-              -e SPRING_FLYWAY_BASELINE_ON_MIGRATE=true \
-              $APP_IMAGE
-              
+            docker run -d --name $APP_CONTAINER --network $NETWORK_NAME --restart always -p 8108:8108 -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_starwars:5432/StarWars -e SPRING_DATASOURCE_USERNAME=postgres -e SPRING_DATASOURCE_PASSWORD=1234 -e SPRING_FLYWAY_BASELINE_ON_MIGRATE=true $APP_IMAGE
+            
             echo "Deploy concluído!"
             echo "Aguardando 3 minutos para estabilização dos serviços..."
             sleep 180
