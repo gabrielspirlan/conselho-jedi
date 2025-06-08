@@ -109,7 +109,7 @@ jobs:
             echo "Criando arquivo de deploy $COMPOSE_FILE_PATH"
             cat << EOF > $COMPOSE_FILE_PATH
             version: '3.8'
-            
+
             services:
               postgres:
                 image: postgres:15
@@ -123,9 +123,9 @@ jobs:
                   - "5544:5432"
                 volumes:
                   - postgres_data:/var/lib/postgresql/data
-            
+
               app:
-                image: $IMAGE_NAME
+                image: \$IMAGE_NAME
                 container_name: jedi-api
                 depends_on:
                   - postgres
@@ -137,12 +137,13 @@ jobs:
                   SPRING_DATASOURCE_PASSWORD: 1234
                   SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
                 restart: always
-            
+
             volumes:
               postgres_data:
             EOF
 
+            # Executa o docker-compose para (re)criar e iniciar os serviços
             echo "Iniciando serviços via docker-compose..."
-            docker-compose -f $COMPOSE_FILE_PATH up -d --force-recreate
-            
-            echo "Deploy concluído! Aplicação acessível em http://${{ secrets.REMOTE_HOST }}:8108"
+            docker-compose -f \$COMPOSE_FILE_PATH up -d --force-recreate
+
+            echo "Deploy concluído! Aplicação acessível em http://\${{ secrets.REMOTE_HOST }}:8108"
