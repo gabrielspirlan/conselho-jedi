@@ -50,13 +50,12 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Garante que não haja um contêiner antigo com o nome desejado
             docker stop sonar_starwars || true
             docker rm sonar_starwars || true
             
-            echo "Iniciando contêiner temporário do SonarQube..."
-            # --- ALTERAÇÃO AQUI: Usando o nome "sonar_starwars" ---
-            docker run -d --name sonar_starwars -p 8097:9000 sonarqube:lts-community
+            echo "Iniciando contêiner temporário do SonarQube na porta 9005..."
+            # --- ALTERAÇÃO AQUI: Usando a porta 9005 ---
+            docker run -d --name sonar_starwars -p 9005:9000 sonarqube:lts-community
             
             echo "Aguardando 15 segundos para o contêiner estabilizar..."
             sleep 15
@@ -84,7 +83,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             echo "Finalizando e removendo contêiner do SonarQube..."
-            # --- ALTERAÇÃO AQUI: Parando e removendo o nome correto ---
             docker stop sonar_starwars || true
             docker rm sonar_starwars || true
 
