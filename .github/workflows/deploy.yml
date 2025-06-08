@@ -52,10 +52,8 @@ jobs:
           script: |
             docker stop sonar_starwars || true
             docker rm sonar_starwars || true
-            
-            # ATENÇÃO: Verifique se esta porta (9005) é a mesma do seu pom.xml e do seu firewall.
-            echo "Iniciando contêiner temporário do SonarQube na porta 9005..."
-            docker run -d --name sonar_starwars -p 9005:9000 sonarqube:lts-community
+        
+            docker run -d --name sonar_starwars -p 8081:9000 sonarqube:lts-community
             
             echo "Aguardando 15 segundos para o contêiner estabilizar..."
             sleep 15
@@ -82,9 +80,9 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # echo "Finalizando e removendo contêiner do SonarQube..."
-            # docker stop sonar_starwars || true
-            # docker rm sonar_starwars || true
+            echo "Finalizando e removendo contêiner do SonarQube..."
+            docker stop sonar_starwars || true
+            docker rm sonar_starwars || true
 
   deploy:
     name: Deploy Remoto via Docker Run
