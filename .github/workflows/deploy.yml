@@ -57,13 +57,12 @@ jobs:
           script: |
             echo "Iniciando contêiner temporário do SonarQube..."
             docker run -d --name sonarqube -p 9000:9000 sonarqube:lts-community
-            echo "Aguardando SonarQube iniciar..."
-            sleep 60
+            echo "Aguardando SonarQube iniciar (90 segundos)..."
+            sleep 90 # TEMPO AUMENTADO
 
       - name: Análise do SonarQube com Maven
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Mantido para outras integrações
-        # A linha do SONAR_TOKEN foi removida daqui
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: mvn verify sonar:sonar -DskipTests -Dsonar.qualitygate.wait=true
 
       - name: Parar e remover o contêiner do SonarQube
@@ -90,13 +89,11 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # --- 1. DEFINIÇÃO DE VARIÁVEIS ---
             APP_IMAGE="gabrielspirlan/jedi-api:latest"
             DB_CONTAINER="postgres_starwars"
             APP_CONTAINER="jedi-api"
             NETWORK_NAME="jedi-network"
-
-            # --- 2. PREPARAÇÃO DO AMBIENTE ---
+            
             docker network create $NETWORK_NAME || true
             echo "Removendo contêineres antigos..."
             docker stop $APP_CONTAINER || true
@@ -106,8 +103,7 @@ jobs:
             echo "Baixando imagens mais recentes..."
             docker pull $APP_IMAGE
             docker pull postgres:15
-
-            # --- 3. INICIAR O BANCO DE DADOS ---
+            
             echo "Iniciando contêiner do PostgreSQL..."
             docker run -d \
               --name $DB_CONTAINER \
@@ -119,11 +115,10 @@ jobs:
               -p 5544:5432 \
               -v postgres_data:/var/lib/postgresql/data \
               postgres:15
-
+              
             echo "Aguardando o banco de dados iniciar..."
             sleep 15
-
-            # --- 4. INICIAR A APLICAÇÃO ---
+            
             echo "Iniciando contêiner da aplicação..."
             docker run -d \
               --name $APP_CONTAINER \
@@ -135,12 +130,11 @@ jobs:
               -e SPRING_DATASOURCE_PASSWORD=1234 \
               -e SPRING_FLYWAY_BASELINE_ON_MIGRATE=true \
               $APP_IMAGE
-
-            # --- 5. VERIFICAÇÃO FINAL ---
+              
             echo "Deploy concluído!"
             echo "Aguardando 3 minutos para estabilização dos serviços..."
             sleep 180
-
+            
             echo "-----------------------------------------------------"
             echo "Verificando contêineres em execução no servidor..."
             docker ps
