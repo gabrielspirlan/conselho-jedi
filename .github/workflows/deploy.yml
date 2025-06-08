@@ -71,8 +71,7 @@ jobs:
 
       - name: Análise do SonarQube com Maven
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # --- ALTERAÇÃO AQUI: Removido o -DskipTests para executar os testes ---
+          GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
         run: mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
 
       - name: Parar e remover o contêiner do SonarQube
