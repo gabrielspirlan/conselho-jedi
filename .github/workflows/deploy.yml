@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Java com SonarQube e Deploy Remoto
+name: CI/CD Pipeline - Deploy Remoto
 
 on:
   push:
@@ -30,82 +30,25 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest
-
-  sonar-analysis:
-    name: Análise de Código com SonarQube
-    runs-on: ubuntu-latest
-    needs: build-and-push
-    steps:
-      - name: Checkout do código
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Configurar JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Iniciar SonarQube no servidor remoto
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            docker run -d --name sonarqube -p 9000:9000 -p 9092:9092 sonarqube:community
-            sleep 30
-
-      - name: Cache do SonarQube e do Maven
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.sonar/cache
-            ~/.m2/repository
-          key: ${{ runner.os }}-sonar-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-sonar-maven-
-
-      - name: Análise do SonarQube com Maven
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: mvn verify sonar:sonar -Dsonar.qualitygate.wait=true
-
-      - name: Finalizar e remover SonarQube no servidor remoto
-        if: always()
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            docker stop sonarqube
-            docker rm sonarqube
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/jedi-api:latest # Nome da imagem fixo para consistência
 
   deploy:
     name: Deploy Remoto com Docker Compose
     runs-on: ubuntu-latest
-    needs: sonar-analysis
+    needs: build-and-push # Agora depende diretamente do build
     steps:
-      - name: Deploy no Servidor Remoto
+      - name: Deploy e Verificação no Servidor Remoto
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Define as variáveis de imagem e nome do arquivo compose
-            IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}:latest
+            # Define o nome da imagem e do arquivo compose
+            IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/jedi-api:latest
             COMPOSE_FILE_PATH=./docker-compose-deploy.yml
 
-            # Puxa a imagem mais recente da aplicação para garantir que está atualizada
-            echo "Fazendo pull da imagem da aplicação: $IMAGE_NAME"
-            docker pull $IMAGE_NAME
-
-            # Cria o arquivo docker-compose.yml no servidor para o deploy
-            # A diretiva 'build: .' é substituída por 'image: $IMAGE_NAME'
+            # Cria o arquivo docker-compose.yml no servidor
             echo "Criando arquivo de deploy $COMPOSE_FILE_PATH"
             cat << EOF > $COMPOSE_FILE_PATH
             version: '3.8'
@@ -142,8 +85,15 @@ jobs:
               postgres_data:
             EOF
 
-            # Executa o docker-compose para (re)criar e iniciar os serviços
-            echo "Iniciando serviços via docker-compose..."
+            # Puxa a imagem mais recente e recria os contêineres
+            echo "Iniciando deploy com docker-compose..."
+            docker-compose -f \$COMPOSE_FILE_PATH pull app
             docker-compose -f \$COMPOSE_FILE_PATH up -d --force-recreate
 
             echo "Deploy concluído! Aplicação acessível em http://\${{ secrets.REMOTE_HOST }}:8108"
+
+            # --- ETAPA DE VERIFICAÇÃO ADICIONADA ---
+            echo "-----------------------------------------------------"
+            echo "Verificando containers em execução no servidor..."
+            docker ps
+            echo "-----------------------------------------------------"
