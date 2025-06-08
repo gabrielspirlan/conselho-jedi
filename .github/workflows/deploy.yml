@@ -55,7 +55,7 @@ jobs:
             
             # ATENÇÃO: Verifique se esta porta (ex: 9005) é a mesma do seu pom.xml e do seu firewall.
             echo "Iniciando contêiner temporário do SonarQube..."
-            docker run -d --name sonar_starwars -p 9005:9000 sonarqube:lts-community
+            docker run -d --name sonar_starwars -p 8081:9000 sonarqube:lts-community
             
             echo "Aguardando SonarQube iniciar completamente (90 segundos)..."
             sleep 90
@@ -63,7 +63,7 @@ jobs:
       - name: Análise do SonarQube com Maven
         env:
           # Corrigido para o token padrão do GitHub.
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
         # --- ALTERAÇÃO AQUI: Adicionando login e senha do admin padrão do SonarQube ---
         run: >
           mvn verify sonar:sonar
