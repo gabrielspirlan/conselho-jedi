@@ -43,7 +43,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Iniciar SonarQube com Limites de Memória
+      - name: Iniciar SonarQube com Mais Memória
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_HOST }}
@@ -53,11 +53,11 @@ jobs:
             docker stop sonar_starwars || true
             docker rm sonar_starwars || true
             
-            echo "Iniciando contêiner do SonarQube na porta 8081..."
-            # --- ALTERAÇÃO AQUI: Usando a porta 8081 ---
+            echo "Iniciando contêiner do SonarQube com 1GB de memória..."
+            # --- ALTERAÇÃO AQUI: Aumentando a memória para 1GB ---
             docker run -d --name sonar_starwars -p 8081:9000 \
-              -e SONAR_ES_JAVA_OPTS="-Xmx512m -Xms512m" \
-              -e SONAR_WEB_JAVA_OPTS="-Xmx512m -Xms128m" \
+              -e SONAR_ES_JAVA_OPTS="-Xmx1g -Xms1g" \
+              -e SONAR_WEB_JAVA_OPTS="-Xmx1g -Xms512m" \
               sonarqube:lts-community
             
             echo "Aguardando SonarQube iniciar completamente (90 segundos)..."
@@ -65,7 +65,6 @@ jobs:
 
       - name: Análise do SonarQube com Maven
         env:
-          # --- ALTERAÇÃO AQUI: Usando o secret G_TOKEN ---
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
         run: >
           mvn verify sonar:sonar
