@@ -43,7 +43,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Iniciar e Diagnosticar SonarQube no servidor
+      - name: Iniciar SonarQube com Limites de Memória
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_HOST }}
@@ -53,18 +53,20 @@ jobs:
             docker stop sonar_starwars || true
             docker rm sonar_starwars || true
             
-            # ATENÇÃO: Verifique se esta porta (ex: 9005) é a mesma do seu pom.xml e do seu firewall.
-            echo "Iniciando contêiner temporário do SonarQube..."
-            docker run -d --name sonar_starwars -p 8081:9000 sonarqube:lts-community
+            echo "Iniciando contêiner do SonarQube na porta 8081..."
+            # --- ALTERAÇÃO AQUI: Usando a porta 8081 ---
+            docker run -d --name sonar_starwars -p 8081:9000 \
+              -e SONAR_ES_JAVA_OPTS="-Xmx512m -Xms512m" \
+              -e SONAR_WEB_JAVA_OPTS="-Xmx512m -Xms128m" \
+              sonarqube:lts-community
             
             echo "Aguardando SonarQube iniciar completamente (90 segundos)..."
             sleep 90
 
       - name: Análise do SonarQube com Maven
         env:
-          # Corrigido para o token padrão do GitHub.
+          # --- ALTERAÇÃO AQUI: Usando o secret G_TOKEN ---
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
-        # --- ALTERAÇÃO AQUI: Adicionando login e senha do admin padrão do SonarQube ---
         run: >
           mvn verify sonar:sonar
           -Dsonar.qualitygate.wait=true
