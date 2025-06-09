@@ -43,7 +43,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Iniciar SonarQube com Mais Memória
+      - name: Iniciar e Verificar SonarQube no servidor
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.REMOTE_HOST }}
@@ -53,15 +53,30 @@ jobs:
             docker stop sonar_starwars || true
             docker rm sonar_starwars || true
             
-            echo "Iniciando contêiner do SonarQube com 1GB de memória..."
-            # --- ALTERAÇÃO AQUI: Aumentando a memória para 1GB ---
+            echo "Iniciando contêiner do SonarQube..."
+            # ATENÇÃO: Verifique se esta porta (ex: 8081) é a mesma do seu pom.xml e firewall
             docker run -d --name sonar_starwars -p 8081:9000 \
               -e SONAR_ES_JAVA_OPTS="-Xmx1g -Xms1g" \
               -e SONAR_WEB_JAVA_OPTS="-Xmx1g -Xms512m" \
               sonarqube:lts-community
             
-            echo "Aguardando SonarQube iniciar completamente (90 segundos)..."
-            sleep 90
+            echo "Aguardando SonarQube ficar operacional (timeout de 2 minutos)..."
+            for i in {1..24}; do
+              # Usa curl para checar o status da API de saúde do SonarQube
+              STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/api/system/health)
+              if [ "$STATUS" -eq 200 ]; then
+                echo "SonarQube está operacional! (Status: $STATUS)"
+                break
+              else
+                echo "Aguardando SonarQube... (Status: $STATUS). Tentativa $i de 24."
+                sleep 5
+              fi
+              if [ "$i" -eq 24 ]; then
+                echo "Erro: SonarQube não ficou operacional após 2 minutos."
+                docker logs sonar_starwars
+                exit 1
+              fi
+            done
 
       - name: Análise do SonarQube com Maven
         env:
