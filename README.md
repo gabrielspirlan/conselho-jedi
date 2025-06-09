@@ -8,7 +8,7 @@ Esta é uma API RESTful desenvolvida em **Java** com o framework Spring Boot. O 
 
 A aplicação está implantada e pode ser acessada através da seguinte URL. A interface do Swagger permite visualizar e interagir com todos os endpoints da API.
 
-**[http://201.23.3.86:8108/swagger-ui/index.html](http://201.23.3.86:8108/swagger-ui/index.html)**
+**[http://201.23.3.86:8108](http://201.23.3.86:8108)**
 
 ---
 
