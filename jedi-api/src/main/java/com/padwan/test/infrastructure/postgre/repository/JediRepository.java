@@ -20,7 +20,7 @@ public interface JediRepository extends JpaRepository<Jedi, Long> {
     List<JediCategoryCountProjection> findCategoryAndCount();
 
     @Query (value = "SELECT m.id as masterId, m.name AS masterName, a.id as apprenticeId, a.name AS apprenticeName" +
-            " FROM jedis a JOIN jedis m ON a.mentor_id = m.id WHERE m.status = 'Mestre Jedi' ORDER BY m.name",
+            " FROM jedis a JOIN jedis m ON a.mentor_id = m.id ORDER BY m.name",
             nativeQuery = true)
     List<MasterAndApprenticeProjection> findAllMastersAndApprentices();
 }
