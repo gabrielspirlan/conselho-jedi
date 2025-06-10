@@ -78,9 +78,9 @@ jobs:
         run: >
           mvn -f jedi-api/pom.xml verify sonar:sonar
 
-      # PASSO ATUALIZADO PARA ANÁLISE DO FRONTEND COM LOGIN DIRETO NO CÓDIGO
       - name: Análise do SonarQube para o Frontend
-        uses: SonarSource/sonar-scanner-cli-action@master
+        # CORREÇÃO APLICADA AQUI: @master trocado por @v2
+        uses: SonarSource/sonar-scanner-cli-action@v2
         env:
           SONAR_HOST_URL: "http://${{ secrets.REMOTE_HOST }}:8117"
           SONAR_LOGIN: "admin"
