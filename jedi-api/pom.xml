@@ -22,7 +22,7 @@
         <spring.datasource.username>postgres</spring.datasource.username>
         <spring.datasource.password>password</spring.datasource.password>
         <sonar.organization>default-organization</sonar.organization>
-        <sonar.host.url>http://201.23.3.86:8081</sonar.host.url>
+        <sonar.host.url>http://201.23.3.86:8117</sonar.host.url>
         <sonar.projectKey>jedi-api</sonar.projectKey>
         <sonar.login>admin</sonar.login>
         <sonar.password>admin</sonar.password>
