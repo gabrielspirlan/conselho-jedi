@@ -69,7 +69,7 @@ jobs:
             docker run -d --name sonar_starwars -p 8117:9000 sonarqube:lts-community
             
             echo "Aguardando o SonarQube iniciar..."
-            sleep 90
+            sleep 100
             docker ps
 
       - name: Análise do SonarQube com Maven
@@ -103,11 +103,11 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             # --- Variáveis de Ambiente ---
-            API_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/jedi-api:latest"
-            FRONT_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/jedi-front:latest"
+            API_IMAGE="gabrielspirlan/jedi-api:latest"
+            FRONT_IMAGE="gabrielspirlan/jedi-front:latest"
             DB_IMAGE="postgres:15"
             
-            APP_CONTAINER="jedi-api"
+            API_CONTAINER="jedi-api"
             FRONT_CONTAINER="jedi-front"
             DB_CONTAINER="postgres_starwars"
             NETWORK_NAME="jedi-network"
@@ -115,9 +115,9 @@ jobs:
             # --- Preparação do Ambiente ---
             docker network create $NETWORK_NAME || true
             echo "Removendo contêineres antigos..."
-            docker stop $APP_CONTAINER || true && docker rm $APP_CONTAINER || true
-            docker stop $FRONT_CONTAINER || true && docker rm $FRONT_CONTAINER || true
-            docker stop $DB_CONTAINER || true && docker rm $DB_CONTAINER || true
+            docker rm --force $API_CONTAINER || true
+            docker rm --force $FRONT_CONTAINER || true
+            docker rm --force $DB_CONTAINER || true
             
             echo "Baixando imagens mais recentes..."
             docker pull $API_IMAGE
@@ -139,7 +139,7 @@ jobs:
             
             # --- Deploy da API Backend ---
             echo "Iniciando contêiner da aplicação (API)..."
-            docker run -d --name $APP_CONTAINER --network $NETWORK_NAME --restart always \
+            docker run -d --name $API_CONTAINER --network $NETWORK_NAME --restart always \
               -p 8119:8108 \
               -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_starwars:5432/StarWars \
               -e SPRING_DATASOURCE_USERNAME=postgres \
@@ -156,7 +156,7 @@ jobs:
             # --- Verificação Final ---
             echo "Deploy concluído!"
             echo "Aguardando estabilização dos serviços..."
-            sleep 30
+            sleep 10
             
             echo "-----------------------------------------------------"
             echo "Verificando contêineres em execução no servidor..."
