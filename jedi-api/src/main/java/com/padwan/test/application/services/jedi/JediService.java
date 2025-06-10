@@ -43,39 +43,40 @@ public class JediService implements IJediService {
     @Override
     public JediCreatedDTO update(Long id, JediCreateDTO dto) {
 
-        Jedi mentor = null;
+        // 1. Encontra o Jedi a ser atualizado ou lança uma exceção
         Jedi jediUpdate = jediRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar um Jedi com o ID: " + id));
 
-        if (dto.getMentor_id() != null) {
-            mentor = jediRepository.findById(dto.getMentor_id())
-                    .orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar o Mentor com o ID: " + id));
-        } else {
-            jediUpdate.setMentor(null);
-        }
-
-        if (dto.getName() != null && !dto.getName().isEmpty() && !jediUpdate.getName().equals(dto.getName())) {
+        // 2. Atualiza os dados básicos
+        if (dto.getName() != null && !dto.getName().isEmpty()) {
             jediUpdate.setName(dto.getName());
         }
 
-        if (dto.getMentor_id() != null && !jediUpdate.getMentor().equals(mentor)) {
-            jediUpdate.setMentor(mentor);
-        }
-
-        if (dto.getStatus() != null && !dto.getStatus().isEmpty() && !jediUpdate.getStatus().equals(dto.getStatus())) {
+        if (dto.getStatus() != null && !dto.getStatus().isEmpty()) {
             jediUpdate.setStatus(dto.getStatus());
         }
 
-        if (dto.getMidichlorians() != null && !jediUpdate.getMidichlorians().equals(dto.getMidichlorians())) {
+        if (dto.getMidichlorians() != null) {
             jediUpdate.setMidichlorians(dto.getMidichlorians());
         }
 
-        Jedi jedi = jediRepository.save(jediUpdate);
+        // 3. Lógica corrigida e segura para atualizar o mentor
+        if (dto.getMentor_id() != null) {
+            Jedi novoMentor = jediRepository.findById(dto.getMentor_id())
+                    .orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar o Mentor com o ID: " + dto.getMentor_id()));
+            jediUpdate.setMentor(novoMentor);
+        } else {
+            // Permite remover o mentor ao enviar mentor_id como nulo
+            jediUpdate.setMentor(null);
+        }
 
-        return jedi.getMentor() != null ?
-                new JediCreatedDTO(jedi.getId(), jedi.getName(), jedi.getStatus(), jedi.getMidichlorians(), jedi.getMentor().getName()) :
-                new JediCreatedDTO(jedi.getId(), jedi.getName(), jedi.getStatus(), jedi.getMidichlorians());
+        // 4. Salva o Jedi com todas as alterações
+        Jedi jediSalvo = jediRepository.save(jediUpdate);
 
+        // 5. Retorna o DTO de resposta
+        return jediSalvo.getMentor() != null ?
+                new JediCreatedDTO(jediSalvo.getId(), jediSalvo.getName(), jediSalvo.getStatus(), jediSalvo.getMidichlorians(), jediSalvo.getMentor().getName()) :
+                new JediCreatedDTO(jediSalvo.getId(), jediSalvo.getName(), jediSalvo.getStatus(), jediSalvo.getMidichlorians());
     }
 
     public List<JediDTO> getWithMidichlorinsAbove(Long quantity) {
