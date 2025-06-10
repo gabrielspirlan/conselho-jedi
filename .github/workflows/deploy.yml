@@ -28,16 +28,16 @@ jobs:
       - name: Build e Push da imagem da API
         uses: docker/build-push-action@v5
         with:
-          context: ./jedi-api # Diretório da API
+          context: ./jedi-api
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/jedi-api:latest
 
       - name: Build e Push da imagem do Frontend
         uses: docker/build-push-action@v5
         with:
-          context: ./jedi-front # Diretório do Frontend
+          context: ./jedi-front
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/jedi-front:latest # Nova imagem para o front
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/jedi-front:latest
 
   sonar-analysis:
     name: Análise de Código com SonarQube
@@ -56,7 +56,8 @@ jobs:
           distribution: 'temurin'
 
       - name: Iniciar e Verificar SonarQube no servidor
-        uses: appleboy/ssh-action@master
+        # CORREÇÃO APLICADA: @master trocado por uma versão estável
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
@@ -78,23 +79,26 @@ jobs:
         run: >
           mvn -f jedi-api/pom.xml verify sonar:sonar
 
-      - name: Análise do SonarQube para o Frontend
-        # CORREÇÃO APLICADA AQUI: @master trocado por @v2
-        uses: SonarSource/sonar-scanner-cli-action@v2
-        env:
-          SONAR_HOST_URL: "http://${{ secrets.REMOTE_HOST }}:8117"
-          SONAR_LOGIN: "admin"
-          SONAR_PASSWORD: "admin"
-        with:
-          projectBaseDir: ./jedi-front
-          args: >
-            -Dsonar.projectKey=jedi-front
-            -Dsonar.sources=.
-            -Dsonar.sourceEncoding=UTF-8
+      - name: Download e Configuração do SonarScanner
+        run: |
+          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+          unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+          echo "$GITHUB_WORKSPACE/sonar-scanner-5.0.1.3006-linux/bin" >> $GITHUB_PATH
 
+      - name: Análise do SonarQube para o Frontend (Execução Manual)
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=jedi-front \
+            -Dsonar.sources=./jedi-front \
+            -Dsonar.host.url=http://${{ secrets.REMOTE_HOST }}:8117 \
+            -Dsonar.login=admin \
+            -Dsonar.password=admin \
+            -Dsonar.sourceEncoding=UTF-8
+            
       - name: Parar e remover o contêiner do SonarQube
         if: always()
-        uses: appleboy/ssh-action@master
+        # CORREÇÃO APLICADA: @master trocado por uma versão estável
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
@@ -110,7 +114,8 @@ jobs:
     needs: sonar-analysis
     steps:
       - name: Deploy e Verificação no Servidor Remoto
-        uses: appleboy/ssh-action@master
+        # CORREÇÃO APLICADA: @master trocado por uma versão estável
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
