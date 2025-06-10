@@ -72,11 +72,25 @@ jobs:
             sleep 100
             docker ps
 
-      - name: Análise do SonarQube com Maven
+      - name: Análise do SonarQube para o Backend (API)
         env:
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
         run: >
           mvn -f jedi-api/pom.xml verify sonar:sonar
+
+      # PASSO ATUALIZADO PARA ANÁLISE DO FRONTEND COM LOGIN DIRETO NO CÓDIGO
+      - name: Análise do SonarQube para o Frontend
+        uses: SonarSource/sonar-scanner-cli-action@master
+        env:
+          SONAR_HOST_URL: "http://${{ secrets.REMOTE_HOST }}:8117"
+          SONAR_LOGIN: "admin"
+          SONAR_PASSWORD: "admin"
+        with:
+          projectBaseDir: ./jedi-front
+          args: >
+            -Dsonar.projectKey=jedi-front
+            -Dsonar.sources=.
+            -Dsonar.sourceEncoding=UTF-8
 
       - name: Parar e remover o contêiner do SonarQube
         if: always()
