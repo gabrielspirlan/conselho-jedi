@@ -157,8 +157,8 @@ jobs:
 
             # --- Verificação Final ---
             echo "Deploy concluído!"
-            echo "Aguardando 3 minutos para estabilização dos serviços..."
-            sleep 180
+            echo "Aguardando estabilização dos serviços..."
+            sleep 30
             
             echo "-----------------------------------------------------"
             echo "Verificando contêineres em execução no servidor..."
