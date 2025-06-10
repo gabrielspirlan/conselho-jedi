@@ -25,10 +25,15 @@ public class JediService implements IJediService {
         return jediRepository.findAll().stream().map(jedi -> new JediDTO(jedi.getId(), jedi.getName(), jedi.getStatus(), jedi.getMidichlorians())).collect(Collectors.toList());
     }
 
-    public JediDTO getById(Long id) {
-        return jediRepository.findById(id)
-                .map(jedi -> new JediDTO(jedi.getId(), jedi.getName(), jedi.getStatus(), jedi.getMidichlorians()))
-                .orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar um Jedi com o ID: " + id));
+    public JediAndMasterDTO getById(Long id) {
+
+        Jedi jedi = jediRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar um Jedi com o ID: " + id));
+        JediAndMasterDTO dto = new JediAndMasterDTO(jedi.getId(), jedi.getName(), jedi.getStatus(), jedi.getMidichlorians());
+        if (jedi.getMentor() != null) {
+            dto.setMentor_id(jedi.getId());
+        }
+        return dto;
+
     }
 
     public JediCreatedDTO create(JediCreateDTO dto) {

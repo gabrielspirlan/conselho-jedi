@@ -1,30 +1,47 @@
 package com.padwan.test.domain.contracts.dto.jedi;
 
-import com.padwan.test.domain.models.Jedi;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class JediDTO {
+public class JediAndMasterDTO {
 
     @Schema(description = "Código único identificador do Jedi", example = "2")
     private Long id;
     @Schema(description = "Nome do Jedi", example = "Luke Skywalker")
-    private java.lang.String name;
+    private String name;
     @Schema(description = "Status do Jedi. Valores permitidos (Mestre Jedi, Jedi e Padawan")
     private String status;
     @Schema(description = "Quantidade de midichlorians do Jedi", example = "15000")
     private Long midichlorians;
+    private Long mentor_id;
 
-
-    public JediDTO () {
+    public JediAndMasterDTO() {
 
     }
 
-    public JediDTO(Long id, java.lang.String name, String status, Long midichlorians) {
+    public JediAndMasterDTO(Long id, String name, String status, Long midichlorians) {
         this.id = id;
         this.name = name;
         this.status = status;
         this.midichlorians = midichlorians;
     }
+
+    public JediAndMasterDTO(Long id, String name, String status, Long midichlorians, Long mentor_id) {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.midichlorians = midichlorians;
+        this.mentor_id = mentor_id;
+    }
+
+    public Long getMentor_id() {
+        return mentor_id;
+    }
+
+    public void setMentor_id(Long mentor_id) {
+        this.mentor_id = mentor_id;
+    }
+
+
 
     public Long getId() {
         return id;
@@ -34,11 +51,11 @@ public class JediDTO {
         this.id = id;
     }
 
-    public java.lang.String getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(java.lang.String name) {
+    public void setName(String name) {
         this.name = name;
     }
 

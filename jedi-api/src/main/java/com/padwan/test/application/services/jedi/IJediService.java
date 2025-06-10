@@ -9,7 +9,7 @@ public interface IJediService {
 
     public List<JediDTO> getAll();
 
-    public JediDTO getById(Long id);
+    public JediAndMasterDTO getById(Long id);
 
     public JediCreatedDTO create(JediCreateDTO dto);
 

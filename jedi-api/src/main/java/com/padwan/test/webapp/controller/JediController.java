@@ -85,9 +85,9 @@ public class JediController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<JediDTO> getJedi(@PathVariable Long id) {
-        JediDTO dto = this.jediService.getById(id);
-        return new ResponseEntity<JediDTO>(dto, HttpStatus.OK);
+    public ResponseEntity<JediAndMasterDTO> getJedi(@PathVariable Long id) {
+        JediAndMasterDTO dto = this.jediService.getById(id);
+        return new ResponseEntity<JediAndMasterDTO>(dto, HttpStatus.OK);
     }
 
     @Operation(

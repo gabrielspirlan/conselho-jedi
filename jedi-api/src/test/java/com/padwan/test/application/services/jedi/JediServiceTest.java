@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.padwan.test.domain.contracts.dto.jedi.JediAndMasterDTO;
 import com.padwan.test.domain.contracts.dto.jedi.JediCategoryCountDTO;
 import com.padwan.test.domain.contracts.dto.jedi.JediDTO;
 import com.padwan.test.domain.contracts.dto.jedi.MasterAndApprenticesDTO;
@@ -48,7 +49,7 @@ public class JediServiceTest {
         when(jediRepository.findById(id)).thenReturn(Optional.of(jedi));
 
         // Action
-        JediDTO result = jediService.getById(id);
+        JediAndMasterDTO result = jediService.getById(id);
 
         // Assert
         assertNotNull(result);

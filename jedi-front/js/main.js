@@ -149,8 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('name').value = jedi.name;
             document.getElementById('status').value = jedi.status;
             document.getElementById('midichlorians').value = jedi.midichlorians;
-            document.getElementById('mentorId').value = jedi.mentor ? jedi.mentor.id : '';
-
+            document.getElementById('mentorId').value = jedi.mentor_id || '';
             document.querySelector('.jedi-form-section').scrollIntoView({ behavior: 'smooth' });
         } catch (error) {
             console.error('Erro ao editar Jedi:', error);
