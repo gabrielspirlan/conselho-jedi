@@ -30,7 +30,7 @@ public class JediService implements IJediService {
         Jedi jedi = jediRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar um Jedi com o ID: " + id));
         JediAndMasterDTO dto = new JediAndMasterDTO(jedi.getId(), jedi.getName(), jedi.getStatus(), jedi.getMidichlorians());
         if (jedi.getMentor() != null) {
-            dto.setMentor_id(jedi.getId());
+            dto.setMentor_id(jedi.getMentor().getId());
         }
         return dto;
 

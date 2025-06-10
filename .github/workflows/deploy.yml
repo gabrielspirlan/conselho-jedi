@@ -66,10 +66,7 @@ jobs:
             docker rm sonar_starwars || true
             
             echo "Iniciando contêiner do SonarQube..."
-            docker run -d --name sonar_starwars -p 8081:9000 \
-              -e SONAR_ES_JAVA_OPTS="-Xmx1g -Xms1g" \
-              -e SONAR_WEB_JAVA_OPTS="-Xmx1g -Xms512m" \
-              sonarqube:lts-community
+            docker run -d --name sonar_starwars -p 8117:9000 sonarqube:lts-community
             
             echo "Aguardando o SonarQube iniciar..."
             sleep 90
@@ -132,7 +129,7 @@ jobs:
               -e POSTGRES_DB=StarWars \
               -e POSTGRES_USER=postgres \
               -e POSTGRES_PASSWORD=1234 \
-              -p 5544:5432 \
+              -p 8118:5432 \
               -v postgres_data:/var/lib/postgresql/data \
               $DB_IMAGE
             
@@ -142,7 +139,7 @@ jobs:
             # --- Deploy da API Backend ---
             echo "Iniciando contêiner da aplicação (API)..."
             docker run -d --name $APP_CONTAINER --network $NETWORK_NAME --restart always \
-              -p 8108:8108 \
+              -p 8119:8108 \
               -e SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_starwars:5432/StarWars \
               -e SPRING_DATASOURCE_USERNAME=postgres \
               -e SPRING_DATASOURCE_PASSWORD=1234 \
@@ -152,7 +149,7 @@ jobs:
             # --- Deploy do Frontend ---
             echo "Iniciando contêiner do Frontend..."
             docker run -d --name $FRONT_CONTAINER --network $NETWORK_NAME --restart always \
-              -p 8102:80 \
+              -p 8120:80 \
               $FRONT_IMAGE
 
             # --- Verificação Final ---
