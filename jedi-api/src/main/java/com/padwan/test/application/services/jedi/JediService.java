@@ -47,10 +47,11 @@ public class JediService implements IJediService {
         Jedi jediUpdate = jediRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar um Jedi com o ID: " + id));
 
-
         if (dto.getMentor_id() != null) {
             mentor = jediRepository.findById(dto.getMentor_id())
                     .orElseThrow(() -> new EntityNotFoundException("Não foi possível encontrar o Mentor com o ID: " + id));
+        } else {
+            jediUpdate.setMentor(null);
         }
 
         if (dto.getName() != null && !dto.getName().isEmpty() && !jediUpdate.getName().equals(dto.getName())) {
