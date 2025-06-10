@@ -1,5 +1,5 @@
-const API_BASE_URL = 'http://localhost:8108/jedi';
-// const API_BASE_URL = '/api/jedi';
+// const API_BASE_URL = 'http://localhost:8108/jedi';
+const API_BASE_URL = '/api/jedi';
 class JediApi {
     static async handleError(response) {
         let message = 'Erro desconhecido';
