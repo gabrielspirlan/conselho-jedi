@@ -152,7 +152,7 @@ jobs:
             # --- Deploy do Frontend ---
             echo "Iniciando contêiner do Frontend..."
             docker run -d --name $FRONT_CONTAINER --network $NETWORK_NAME --restart always \
-              -p 80:80 \
+              -p 8102:80 \
               $FRONT_IMAGE
 
             # --- Verificação Final ---
