@@ -103,8 +103,8 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             # --- Variáveis de Ambiente ---
-            API_IMAGE="gabrielspirlan/jedi-api:latest"
-            FRONT_IMAGE="gabrielspirlan/jedi-front:latest"
+            API_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/jedi-api:latest"
+            FRONT_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/jedi-front:latest"
             DB_IMAGE="postgres:15"
             
             API_CONTAINER="jedi-api"
