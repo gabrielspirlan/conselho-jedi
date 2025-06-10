@@ -1,0 +1,277 @@
+:root {
+    --sw-primary: #2c3e50;
+    --sw-secondary: #34495e;
+    --sw-accent: #3498db;
+    --sw-light: #ecf0f1;
+    --sw-dark: #1a1a1a;
+    --sw-text: #333333;
+    --sw-text-light: #7f8c8d;
+    --sw-success: #27ae60;
+    --sw-warning: #f39c12;
+    --sw-danger: #e74c3c;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: var(--sw-text);
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+.sw-header {
+    background-color: var(--sw-primary);
+    padding: 1rem 2rem;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    height: 40px;
+    filter: brightness(0) invert(1);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    color: var(--sw-primary);
+    margin: 0;
+}
+
+.sw-footer {
+    background-color: var(--sw-primary);
+    padding: 1rem;
+    text-align: center;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.sw-button {
+    background-color: white;
+    color: var(--sw-primary);
+    border: 1px solid var(--sw-primary);
+    padding: 0.5rem 1rem;
+    font-family: 'Roboto', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.sw-button:hover {
+    background-color: var(--sw-primary);
+    color: white;
+}
+
+.sw-button-primary {
+    background-color: var(--sw-primary);
+    color: white;
+}
+
+.sw-button-primary:hover {
+    background-color: var(--sw-secondary);
+}
+
+.sw-button-danger {
+    background-color: white;
+    color: var(--sw-danger);
+    border-color: var(--sw-danger);
+}
+
+.sw-button-danger:hover {
+    background-color: var(--sw-danger);
+    color: white;
+}
+
+.sw-input, .sw-select {
+    background-color: white;
+    color: var(--sw-text);
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+    width: 100%;
+    border-radius: 4px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9rem;
+    transition: border 0.2s ease;
+}
+
+.sw-input:focus, .sw-select:focus {
+    outline: none;
+    border-color: var(--sw-accent);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--sw-primary);
+    font-size: 0.9rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1.2rem;
+}
+
+.jedi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.2rem;
+    margin-top: 1.5rem;
+}
+
+.jedi-card {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 1.2rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.jedi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.jedi-card h3 {
+    margin-top: 0;
+    color: var(--sw-primary);
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.jedi-card p {
+    margin: 0.4rem 0;
+    font-size: 0.9rem;
+    color: var(--sw-text-light);
+}
+
+.jedi-card .midichlorians {
+    font-weight: bold;
+    color: var(--sw-primary);
+}
+
+.jedi-card .status {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-padawan {
+    background-color: #f0f8ff;
+    color: #2980b9;
+    border: 1px solid #d6eaf8;
+}
+
+.status-jedi {
+    background-color: #f0fff0;
+    color: #27ae60;
+    border: 1px solid #d5f5e3;
+}
+
+.status-mestre-jedi {
+    background-color: #f5eef8;
+    color: #8e44ad;
+    border: 1px solid #e8daef;
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.search-container {
+    margin-bottom: 1.2rem;
+}
+
+.search-container input {
+    max-width: 300px;
+}
+
+.jedi-form-section, .jedi-list-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--sw-text-light);
+    grid-column: 1 / -1;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    grid-column: 1 / -1;
+}
+
+.loading-spinner {
+    border: 3px solid rgba(44, 62, 80, 0.1);
+    border-radius: 50%;
+    border-top: 3px solid var(--sw-primary);
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.fade-in {
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .jedi-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .card-actions {
+        flex-direction: column;
+    }
+    
+    .search-container input {
+        max-width: 100%;
+    }
+}

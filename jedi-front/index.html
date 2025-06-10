@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Jedis</title>
+    <link rel="stylesheet" href="css/star-wars-theme.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="sw-header">
+        <div class="logo-container">
+            <h1 style="color: white;">Conselho Jedi</h1>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="jedi-form-section">
+            <h2>Registro de Jedi</h2>
+            <form id="jediForm" class="sw-form">
+                <input type="hidden" id="jediId">
+                
+                <div class="form-group">
+                    <label for="name">Nome do Jedi</label>
+                    <input type="text" id="name" required class="sw-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="status">Classificação</label>
+                    <select id="status" required class="sw-select">
+                        <option value="">Selecione...</option>
+                        <option value="Padawan">Padawan</option>
+                        <option value="Jedi">Jedi</option>
+                        <option value="Mestre Jedi">Mestre Jedi</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="midichlorians">Contagem de Midichlorians</label>
+                    <input type="number" id="midichlorians" min="0" required class="sw-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="mentorId">ID do Mentor (opcional)</label>
+                    <input type="number" id="mentorId" min="0" class="sw-input">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" id="saveBtn" class="sw-button sw-button-primary">Salvar</button>
+                    <button type="button" id="clearBtn" class="sw-button">Limpar</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="jedi-list-section">
+            <h2>Jedis Registrados</h2>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Buscar Jedi..." class="sw-input">
+            </div>
+            <div id="jediList" class="jedi-grid"></div>
+        </section>
+    </main>
+
+    <footer class="sw-footer">
+        <p>Ordem Jedi &copy; 2023 - Que a Força esteja com você</p>
+    </footer>
+
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
