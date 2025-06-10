@@ -56,7 +56,6 @@ jobs:
           distribution: 'temurin'
 
       - name: Iniciar e Verificar SonarQube no servidor
-        # CORREÇÃO APLICADA: @master trocado por uma versão estável
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.REMOTE_HOST }}
@@ -97,7 +96,6 @@ jobs:
             
       - name: Parar e remover o contêiner do SonarQube
         if: always()
-        # CORREÇÃO APLICADA: @master trocado por uma versão estável
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.REMOTE_HOST }}
@@ -114,7 +112,6 @@ jobs:
     needs: sonar-analysis
     steps:
       - name: Deploy e Verificação no Servidor Remoto
-        # CORREÇÃO APLICADA: @master trocado por uma versão estável
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.REMOTE_HOST }}
