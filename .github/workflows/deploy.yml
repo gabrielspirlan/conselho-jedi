@@ -76,25 +76,29 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
         run: >
-          mvn -f jedi-api/pom.xml verify sonar:sonar
+          mvn -f jedi-api/pom.xml -q -B verify sonar:sonar
           -Dsonar.host.url=http://${{ secrets.REMOTE_HOST }}:8117
           -Dsonar.login=admin
           -Dsonar.password=admin
+          -Dsonar.qualitygate.wait=true
+          -Dsonar.log.level=WARN
 
       - name: Análise do SonarQube para o Frontend (via Docker)
         run: |
           docker run \
-            --rm \
-            -v "${{ github.workspace }}:/usr/src" \
-            -w /usr/src \
-            sonarsource/sonar-scanner-cli:latest \
-            sonar-scanner \
-              -Dsonar.projectKey=jedi-front \
-              -Dsonar.sources=./jedi-front \
-              -Dsonar.host.url=http://${{ secrets.REMOTE_HOST }}:8117 \
-              -Dsonar.login=admin \
-              -Dsonar.password=admin \
-              -Dsonar.sourceEncoding=UTF-8
+              --rm \
+              -v "${{ github.workspace }}:/usr/src" \
+              -w /usr/src \
+              sonarsource/sonar-scanner-cli:latest \
+              sonar-scanner \
+                -Dsonar.projectKey=jedi-front \
+                -Dsonar.sources=./jedi-front \
+                -Dsonar.host.url=http://${{ secrets.REMOTE_HOST }}:8117 \
+                -Dsonar.login=admin \
+                -Dsonar.password=admin \
+                -Dsonar.sourceEncoding=UTF-8 \
+                -Dsonar.qualitygate.wait=true \
+                -Dsonar.log.level=WARN
               
       - name: Parar e remover o contêiner do SonarQube
         if: always()
@@ -148,7 +152,7 @@ jobs:
               -e POSTGRES_DB=StarWars \
               -e POSTGRES_USER=postgres \
               -e POSTGRES_PASSWORD=1234 \
-              -p 8118:5432 \
+              -p 8121:5432 \
               -v postgres_data:/var/lib/postgresql/data \
               $DB_IMAGE
             
