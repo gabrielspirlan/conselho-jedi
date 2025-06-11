@@ -145,6 +145,9 @@ jobs:
             docker pull $API_IMAGE
             docker pull $FRONT_IMAGE
             docker pull $DB_IMAGE
+
+            # Criando diretório para persistência de dados do Postgres
+            mkdir -p ~/starwars/postgres-data
             
             # --- Deploy do Banco de Dados ---
             echo "Iniciando contêiner do PostgreSQL..."
@@ -153,7 +156,7 @@ jobs:
               -e POSTGRES_USER=postgres \
               -e POSTGRES_PASSWORD=1234 \
               -p 8121:5432 \
-              -v postgres_data:/var/lib/postgresql/data \
+              -v ~/starwars/postgres-data:/var/lib/postgresql/data \
               $DB_IMAGE
             
             echo "Aguardando o banco de dados iniciar..."
