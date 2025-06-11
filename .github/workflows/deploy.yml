@@ -77,23 +77,25 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.G_TOKEN }}
         run: >
           mvn -f jedi-api/pom.xml verify sonar:sonar
+          -Dsonar.host.url=http://${{ secrets.REMOTE_HOST }}:8117
+          -Dsonar.login=admin
+          -Dsonar.password=admin
 
-      - name: Download e Configuração do SonarScanner
+      - name: Análise do SonarQube para o Frontend (via Docker)
         run: |
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
-          unzip sonar-scanner-cli-5.0.1.3006-linux.zip
-          echo "$GITHUB_WORKSPACE/sonar-scanner-5.0.1.3006-linux/bin" >> $GITHUB_PATH
-
-      - name: Análise do SonarQube para o Frontend (Execução Manual)
-        run: |
-          sonar-scanner \
-            -Dsonar.projectKey=jedi-front \
-            -Dsonar.sources=./jedi-front \
-            -Dsonar.host.url=http://${{ secrets.REMOTE_HOST }}:8117 \
-            -Dsonar.login=admin \
-            -Dsonar.password=admin \
-            -Dsonar.sourceEncoding=UTF-8
-            
+          docker run \
+            --rm \
+            -v "${{ github.workspace }}:/usr/src" \
+            -w /usr/src \
+            sonarsource/sonar-scanner-cli:latest \
+            sonar-scanner \
+              -Dsonar.projectKey=jedi-front \
+              -Dsonar.sources=./jedi-front \
+              -Dsonar.host.url=http://${{ secrets.REMOTE_HOST }}:8117 \
+              -Dsonar.login=admin \
+              -Dsonar.password=admin \
+              -Dsonar.sourceEncoding=UTF-8
+              
       - name: Parar e remover o contêiner do SonarQube
         if: always()
         uses: appleboy/ssh-action@v1.0.3
